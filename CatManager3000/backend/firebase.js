@@ -1,10 +1,13 @@
 const admin = require('firebase-admin');
-const serviceAccount = require('./firebase-service-account.json'); // Името на вашия файл
 
+// Safely load from environment variables
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://catmanager300.firebaseio.com" // Заменете с вашия project_id
+  credential: admin.credential.cert({
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+    privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
+  }),
+  databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`
 });
 
-const db = admin.firestore();
-module.exports = db;
+module.exports = admin.firestore();
